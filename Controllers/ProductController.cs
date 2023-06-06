@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using ProductApi.model;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace ProductApi.Controllers
 {
@@ -10,10 +13,12 @@ namespace ProductApi.Controllers
     public class ProductController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly ProductContext _db;
 
-        public ProductController(IConfiguration configuration)
+        public ProductController(IConfiguration configuration, ProductContext context)
         {
             _configuration = configuration;
+            _db = context;
         }
 
         [HttpGet("{id?}")]
@@ -53,6 +58,44 @@ namespace ProductApi.Controllers
                     myCon.Close();
                 }
             }
+
+            return new JsonResult(table);
+        }
+
+
+        [HttpGet ("page/{page}")]
+        public JsonResult Get(int page)
+        {
+            if (page == 0 || page == null) {
+                page = 1;
+            }
+            const int Limit = 15;
+            int offset = (Convert.ToInt32(page) - 1) * Limit;
+            string query = @"
+                            SELECT * FROM  dbo.Product     
+                            ORDER BY ID
+                            OFFSET @offset ROWS
+                            FETCH NEXT @Limit ROWS ONLY;
+                         ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                     myCommand.Parameters.AddWithValue("@offset", offset);
+                     myCommand.Parameters.AddWithValue("@Limit", Limit);
+                 
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
 
             return new JsonResult(table);
         }

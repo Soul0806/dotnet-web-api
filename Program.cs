@@ -5,19 +5,27 @@ using ProductApi.Controllers;
 using ProductApi.model;
 using System.Data.Common;
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
 namespace ProductApi
 {
     public class Program
     {
+        
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnetion") ?? throw new InvalidOperationException("Connection string 'DefaultConnetion' not found.");
             // Add services to the container.
             builder.Services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
+
+            builder.Services.AddDbContext<ProductContext>(options =>
+                options.UseSqlServer(connectionString));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
