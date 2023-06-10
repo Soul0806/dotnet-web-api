@@ -12,27 +12,28 @@ namespace ProductApi.Controllers
     {   
         private readonly string _savePath = @"D:\React\ui\react-app\data.json";
         private readonly JsonController _jsonCon;
-        private readonly IDb _db;
+        private readonly IDb _mydb;
 
         public IOController(JsonController jsonCon, IDb db) {
             _jsonCon = jsonCon;
-            _db = db;
+            _mydb = db;
         }
 
         [HttpGet("/write/{num?}")]
-        public async Task<Product> Write(int? num) {
+        public async Task<Merchandise> Write(int num) {
 
             using StreamWriter writer = new StreamWriter(_savePath, false);
             // write to data.json
             string jsonString = await _jsonCon.Read(num);
             writer.Write(jsonString);
-            
+
             // remove current DB table records
 
-            _db.TruncateTable();
+            _mydb.TruncateTable();
 
             //insert to DB
-            Product product = JsonConvert.DeserializeObject<Product>(jsonString);
+            //Product product = JsonConvert.DeserializeObject<Product>(jsonString);
+            Merchandise merchandise = JsonConvert.DeserializeObject<Merchandise>(jsonString);
             List<string> list = new List<string>();
 
             DataTable dt = new DataTable();
@@ -44,14 +45,14 @@ namespace ProductApi.Controllers
 
             //list.Add($"('%{row.Title}%', '%{row.Price}%', '%{row.Brand}%', '%{row.Category}%', '%{row.Thumbnail}%')");
             // 加入多筆資料到 DataTable
-            foreach (var row in product.products)
+            foreach (var row in merchandise.products)
             {
                 dt.Rows.Add(row.Title, row.Price, row.Brand, row.Category, row.Thumbnail);
             }
 
-            _db.InsertUpdateToDb(dt);
+            _mydb.InsertUpdateToDb(dt);
 
-            return product;
+            return merchandise;
         }
     }
 }

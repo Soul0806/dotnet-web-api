@@ -14,6 +14,7 @@ namespace ProductApi.Controllers
 
         public async Task<string> Read(int? num)
         {
+           
             using HttpClient client = new();
             HttpResponseMessage response = await client.GetAsync($"{_productApi}?limit={num}");
             if (response.IsSuccessStatusCode)

@@ -28,7 +28,7 @@ namespace ProductApi.model
                 using SqlBulkCopy bulkCopy = new SqlBulkCopy(sc);
                 sc.Open();
                 // 設定目標資料表的名稱
-                bulkCopy.DestinationTableName = "product";
+                bulkCopy.DestinationTableName = "Merchandise";
 
                 // 對應欄位名稱
                 bulkCopy.ColumnMappings.Add("Title", "Title");
@@ -48,7 +48,7 @@ namespace ProductApi.model
         }
 
         public void TruncateTable() {
-            string query = "TRUNCATE TABLE dbo.product";
+            string query = "TRUNCATE TABLE dbo.Merchandise";
             try
             {
                 using SqlConnection sc = new SqlConnection(_connectString);

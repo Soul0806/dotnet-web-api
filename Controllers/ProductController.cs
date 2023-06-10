@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using ProductApi.model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using ProductApi.Data;
 
 namespace ProductApi.Controllers
 {
@@ -13,53 +14,47 @@ namespace ProductApi.Controllers
     public class ProductController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly ProductContext _db;
+        private readonly MyDbContext _context;
 
-        public ProductController(IConfiguration configuration, ProductContext context)
+        public ProductController(IConfiguration configuration, MyDbContext context)
         {
             _configuration = configuration;
-            _db = context;
+            _context = context;
         }
 
         [HttpGet("{id?}")]
         public JsonResult Get(int? id = null)
         {
-            string query;
+            List<Merchandise> m;
             if (id.HasValue)
             {
-                query = @"
-                            select * from
-                            dbo.Product where ID = (@id)                        
-                            ";
+               m = _context.Merchandise.Where(m => m.ID == id).ToList();
+                            
             }
             else
             {
-                query = @"
-                            select * from
-                            dbo.Product          
-                            ";
+              m = _context.Merchandise.ToList();
             }
 
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    if (id.HasValue)
-                    {
-                        myCommand.Parameters.AddWithValue("@id", id);
-                    }
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
-
-            return new JsonResult(table);
+            //DataTable table = new DataTable();
+            //string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
+            //SqlDataReader myReader;
+            //using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            //{
+            //    myCon.Open();
+            //    using (SqlCommand myCommand = new SqlCommand(query, myCon))
+            //    {
+            //        if (id.HasValue)
+            //        {
+            //            myCommand.Parameters.AddWithValue("@id", id);
+            //        }
+            //        myReader = myCommand.ExecuteReader();
+            //        table.Load(myReader);
+            //        myReader.Close();
+            //        myCon.Close();
+            //    }
+            //}
+            return new JsonResult(m);
         }
 
 
@@ -69,35 +64,38 @@ namespace ProductApi.Controllers
             if (page == 0 || page == null) {
                 page = 1;
             }
+            
             const int Limit = 15;
             int offset = (Convert.ToInt32(page) - 1) * Limit;
-            string query = @"
-                            SELECT * FROM  dbo.Product     
-                            ORDER BY ID
-                            OFFSET @offset ROWS
-                            FETCH NEXT @Limit ROWS ONLY;
-                         ";
+            List<Merchandise> m = _context.Merchandise.Skip(offset).Take(Limit).ToList();
 
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                     myCommand.Parameters.AddWithValue("@offset", offset);
-                     myCommand.Parameters.AddWithValue("@Limit", Limit);
+            //string query = @"
+            //                SELECT * FROM  dbo.Product     
+            //                ORDER BY ID
+            //                OFFSET @offset ROWS
+            //                FETCH NEXT @Limit ROWS ONLY;
+            //             ";
+
+            //DataTable table = new DataTable();
+            //string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
+            //SqlDataReader myReader;
+            //using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            //{
+            //    myCon.Open();
+            //    using (SqlCommand myCommand = new SqlCommand(query, myCon))
+            //    {
+            //         myCommand.Parameters.AddWithValue("@offset", offset);
+            //         myCommand.Parameters.AddWithValue("@Limit", Limit);
                  
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
+            //        myReader = myCommand.ExecuteReader();
+            //        table.Load(myReader);
+            //        myReader.Close();
+            //        myCon.Close();
+            //    }
+            //}
 
 
-            return new JsonResult(table);
+            return new JsonResult(m);
         }
 
         [HttpPost]
@@ -199,6 +197,7 @@ namespace ProductApi.Controllers
         [HttpGet("Category")]
         public JsonResult Category(int id)
         {
+            List<Merchandise> m = _context.Merchandise.ToList();
             string query = @"
                            select distinct Category
                            from dbo.Product
@@ -219,7 +218,13 @@ namespace ProductApi.Controllers
                     myCon.Close();
                 }
             }
-            return new JsonResult(table);
+            return new JsonResult(m);
         }
+
+        //[HttpGet("test")]
+        //public JsonResult Test() {
+        //    List<Merchandise> m = _context.Merchandise.ToList();
+        //    return new JsonResult(m);
+        //}
     }
 }

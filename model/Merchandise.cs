@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductApi.model
 {
-  
-    public class Product
+    public class Merchandise
     {
-        public List<Product>? products { get; set; }
-
+        [NotMapped]
+        public List<Merchandise>? products { get; set; }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonProperty("id")]

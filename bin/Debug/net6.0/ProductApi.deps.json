@@ -13,6 +13,7 @@
           "Microsoft.EntityFrameworkCore": "6.0.16",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.16",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.16",
+          "Microsoft.EntityFrameworkCore.Tools": "6.0.16",
           "Newtonsoft.Json": "13.0.3",
           "Swashbuckle.AspNetCore": "6.2.3",
           "System.Data.SqlClient": "4.8.5"
@@ -52,6 +53,14 @@
           "lib/netstandard2.0/Azure.Identity.dll": {
             "assemblyVersion": "1.7.0.0",
             "fileVersion": "1.700.22.46903"
+          }
+        }
+      },
+      "Humanizer.Core/2.8.26": {
+        "runtime": {
+          "lib/netstandard2.0/Humanizer.dll": {
+            "assemblyVersion": "2.8.0.0",
+            "fileVersion": "2.8.26.1919"
           }
         }
       },
@@ -176,6 +185,18 @@
         }
       },
       "Microsoft.EntityFrameworkCore.Analyzers/6.0.16": {},
+      "Microsoft.EntityFrameworkCore.Design/6.0.16": {
+        "dependencies": {
+          "Humanizer.Core": "2.8.26",
+          "Microsoft.EntityFrameworkCore.Relational": "6.0.16"
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.EntityFrameworkCore.Design.dll": {
+            "assemblyVersion": "6.0.16.0",
+            "fileVersion": "6.0.1623.17009"
+          }
+        }
+      },
       "Microsoft.EntityFrameworkCore.Relational/6.0.16": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "6.0.16",
@@ -198,6 +219,11 @@
             "assemblyVersion": "6.0.16.0",
             "fileVersion": "6.0.1623.17009"
           }
+        }
+      },
+      "Microsoft.EntityFrameworkCore.Tools/6.0.16": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Design": "6.0.16"
         }
       },
       "Microsoft.Extensions.ApiDescription.Server/3.0.0": {},
@@ -711,6 +737,13 @@
       "path": "azure.identity/1.7.0",
       "hashPath": "azure.identity.1.7.0.nupkg.sha512"
     },
+    "Humanizer.Core/2.8.26": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OiKusGL20vby4uDEswj2IgkdchC1yQ6rwbIkZDVBPIR6al2b7n3pC91elBul9q33KaBgRKhbZH3+2Ur4fnWx2A==",
+      "path": "humanizer.core/2.8.26",
+      "hashPath": "humanizer.core.2.8.26.nupkg.sha512"
+    },
     "Microsoft.AspNetCore.JsonPatch/6.0.16": {
       "type": "package",
       "serviceable": true,
@@ -774,6 +807,13 @@
       "path": "microsoft.entityframeworkcore.analyzers/6.0.16",
       "hashPath": "microsoft.entityframeworkcore.analyzers.6.0.16.nupkg.sha512"
     },
+    "Microsoft.EntityFrameworkCore.Design/6.0.16": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bcUqLiU1uMDy8RAQl1qE4k7BELP8MqoX0uJSMXXsyWUPTz3Hq6nU94Tp6+/wURaVndt/CB0COo0M5Bfh+vToLg==",
+      "path": "microsoft.entityframeworkcore.design/6.0.16",
+      "hashPath": "microsoft.entityframeworkcore.design.6.0.16.nupkg.sha512"
+    },
     "Microsoft.EntityFrameworkCore.Relational/6.0.16": {
       "type": "package",
       "serviceable": true,
@@ -787,6 +827,13 @@
       "sha512": "sha512-xqJXDqjq8ArJzwUZjSaBsbSFZIhsrTf1oLxoOWFN+p9itCeFJvJ0AZkbGuzKt6Vq/ZJ4YkkdIrCj451RAwM5Mw==",
       "path": "microsoft.entityframeworkcore.sqlserver/6.0.16",
       "hashPath": "microsoft.entityframeworkcore.sqlserver.6.0.16.nupkg.sha512"
+    },
+    "Microsoft.EntityFrameworkCore.Tools/6.0.16": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0SGLgmBdpC8BdjlMAsnsxJUiF5+Qj9NuEE+ysA+Oau/3X1HZGpLqbIYlFPGoboBdi8uqO9CTO2KbEmVxS72Deg==",
+      "path": "microsoft.entityframeworkcore.tools/6.0.16",
+      "hashPath": "microsoft.entityframeworkcore.tools.6.0.16.nupkg.sha512"
     },
     "Microsoft.Extensions.ApiDescription.Server/3.0.0": {
       "type": "package",

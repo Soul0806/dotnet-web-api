@@ -7,13 +7,13 @@ using System.Data.Common;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using ProductApi.Data;
 
 namespace ProductApi
 {
     public class Program
     {
         
-
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +24,7 @@ namespace ProductApi
                 c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
-            builder.Services.AddDbContext<ProductContext>(options =>
+            builder.Services.AddDbContext<MyDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
             builder.Services.AddControllers();
