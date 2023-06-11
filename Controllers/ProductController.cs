@@ -25,36 +25,15 @@ namespace ProductApi.Controllers
         [HttpGet("{id?}")]
         public JsonResult Get(int? id = null)
         {
-            List<Merchandise> m;
-            if (id.HasValue)
-            {
-               m = _context.Merchandise.Where(m => m.ID == id).ToList();
-                            
+            List<Merchandise> merchan;
+            if (id.HasValue) {
+                merchan = _context.Merchandise.Where(m => m.ID == id).ToList();
             }
-            else
-            {
-              m = _context.Merchandise.ToList();
+            else {
+                merchan = _context.Merchandise.ToList();
             }
 
-            //DataTable table = new DataTable();
-            //string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
-            //SqlDataReader myReader;
-            //using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            //{
-            //    myCon.Open();
-            //    using (SqlCommand myCommand = new SqlCommand(query, myCon))
-            //    {
-            //        if (id.HasValue)
-            //        {
-            //            myCommand.Parameters.AddWithValue("@id", id);
-            //        }
-            //        myReader = myCommand.ExecuteReader();
-            //        table.Load(myReader);
-            //        myReader.Close();
-            //        myCon.Close();
-            //    }
-            //}
-            return new JsonResult(m);
+            return new JsonResult(merchan);
         }
 
 
@@ -69,128 +48,46 @@ namespace ProductApi.Controllers
             int offset = (Convert.ToInt32(page) - 1) * Limit;
             List<Merchandise> m = _context.Merchandise.Skip(offset).Take(Limit).ToList();
 
-            //string query = @"
-            //                SELECT * FROM  dbo.Product     
-            //                ORDER BY ID
-            //                OFFSET @offset ROWS
-            //                FETCH NEXT @Limit ROWS ONLY;
-            //             ";
-
-            //DataTable table = new DataTable();
-            //string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
-            //SqlDataReader myReader;
-            //using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            //{
-            //    myCon.Open();
-            //    using (SqlCommand myCommand = new SqlCommand(query, myCon))
-            //    {
-            //         myCommand.Parameters.AddWithValue("@offset", offset);
-            //         myCommand.Parameters.AddWithValue("@Limit", Limit);
-                 
-            //        myReader = myCommand.ExecuteReader();
-            //        table.Load(myReader);
-            //        myReader.Close();
-            //        myCon.Close();
-            //    }
-            //}
-
-
             return new JsonResult(m);
         }
 
         [HttpPost]
-        public JsonResult Post(Product p)
+        public async Task<JsonResult> Post(Merchandise merchan)
         {
-            string query = @"
-                           insert into dbo.Product (Title, Price, Brand, Category, Thumbnail)
-                           values (@Title, @Price, @Brand, @Category, @Thumbnail)
-                            ";
-
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@Title", p.Title);
-                    myCommand.Parameters.AddWithValue("@Price", p.Price);
-                    myCommand.Parameters.AddWithValue("@Brand", p.Brand);
-                    myCommand.Parameters.AddWithValue("@Category", p.Category);
-                    myCommand.Parameters.AddWithValue("@Thumbnail", p.Thumbnail);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
-
+            _context.Merchandise.Add(merchan);
+            await _context.SaveChangesAsync();
             return new JsonResult("Added Successfully");
         }
 
         [HttpPut]
-        public JsonResult Put(Product p)
+        public async Task<JsonResult> Put(Merchandise merchan)
         {
-            string query = @"
-                           update dbo.Product
-                           set       
-                           Title = (@Title),
-                           Price = (@Price),
-                           Brand = (@Brand),
-                           Category = (@Category)
-                           where ID = (@id)
-                            ";
-
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            var entity = _context.Merchandise.FirstOrDefault(m => m.ID == merchan.ID);
+            if (entity != null)
             {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@Title", p.Title);
-                    myCommand.Parameters.AddWithValue("@Price", p.Price);
-                    myCommand.Parameters.AddWithValue("@Brand", p.Brand);
-                    myCommand.Parameters.AddWithValue("@Category", p.Category);
-                    myCommand.Parameters.AddWithValue("@id", p.ID);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
+                entity.Title = merchan.Title;
+                entity.Price = merchan.Price;
+                entity.Brand = merchan.Brand;
+                entity.Category = merchan.Category;
+                entity.Thumbnail = merchan.Thumbnail;
 
-            return new JsonResult("Updated Successfully");
+                await _context.SaveChangesAsync();
+                return new JsonResult("Updated Successfully");
+            }
+            return new JsonResult("not found");
         }
 
         [HttpDelete("{id}")]
-
-        public JsonResult Delete(int id)
+        public async Task<JsonResult> Delete(int id)
         {
-            string query = @"
-                           delete from dbo.Product
-                           where ID = (@id)
-                            ";
-
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            var entity = _context.Merchandise.FirstOrDefault(e => e.ID == id);
+            if (entity != null)
             {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@id", id);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
+                _context.Merchandise.Remove(entity);
+                await _context.SaveChangesAsync();
+                return new JsonResult("Deleted Successfully");
             }
-
-            return new JsonResult("Deleted Successfully");
+            return new JsonResult("not found");
         }
 
 
