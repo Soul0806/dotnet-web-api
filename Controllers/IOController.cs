@@ -54,5 +54,6 @@ namespace ProductApi.Controllers
 
             return merchandise;
         }
+
     }
 }

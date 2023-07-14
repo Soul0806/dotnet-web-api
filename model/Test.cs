@@ -9,7 +9,6 @@ namespace ProductApi.model
     public class Test
     {
         //public List<Test>? products { get; set; }
-
         public int ID { get; set; }
 
     }

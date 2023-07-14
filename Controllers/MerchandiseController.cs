@@ -9,14 +9,14 @@ using ProductApi.Data;
 
 namespace ProductApi.Controllers
 {
-    [Route("api/product")]
+    [Route("api/merchandise")]
     [ApiController]
-    public class ProductController : Controller
+    public class MerchandiseController : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly MyDbContext _context;
 
-        public ProductController(IConfiguration configuration, MyDbContext context)
+        public MerchandiseController(IConfiguration configuration, MyDbContext context)
         {
             _configuration = configuration;
             _context = context;
@@ -40,7 +40,7 @@ namespace ProductApi.Controllers
         [HttpGet ("page/{page}")]
         public JsonResult Get(int page)
         {
-            if (page == 0 || page == null) {
+            if (page <= 0 || page == null) {
                 page = 1;
             }
             
@@ -91,31 +91,12 @@ namespace ProductApi.Controllers
         }
 
 
-        [HttpGet("Category")]
-        public JsonResult Category(int id)
+        [HttpGet("search")]
+        public JsonResult Search([FromQuery] string search)
         {
-            List<Merchandise> m = _context.Merchandise.ToList();
-            string query = @"
-                           select distinct Category
-                           from dbo.Product
-                            ";
-
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("DefaultConnetion");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@id", id);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
-            return new JsonResult(m);
+            string key = search;
+            //List<Merchandise> m = _context.Merchandise.ToList();
+            return new JsonResult(key);
         }
 
         //[HttpGet("test")]
